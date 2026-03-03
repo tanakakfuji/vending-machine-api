@@ -1,4 +1,4 @@
-INSERT INTO vending_machine (id, name, item_capacity, status) VALUES
+INSERT INTO vending_machine (id, name, slot_capacity, status) VALUES
 (1, '健康自販機', 5, 'OPEN'),
 (2, '目覚まし自販機', 6, 'CLOSED'),
 (3, '甘党自販機', 4, 'OPEN');

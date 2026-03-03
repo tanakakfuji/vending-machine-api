@@ -1,7 +1,7 @@
 CREATE TABLE if NOT EXISTS vending_machine (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
-    item_capacity INTEGER NOT NULL CHECK (item_capacity >= 0),
+    slot_capacity INTEGER NOT NULL CHECK (slot_capacity >= 0),
     status VARCHAR(255) DEFAULT 'CLOSED' CHECK (status IN ('OPEN', 'CLOSED')) NOT NULL
 );
 
