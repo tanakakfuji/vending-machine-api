@@ -212,7 +212,7 @@ public class VendingMachineTest {
             Drink drink2 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル2"), new Volume(500), new Price(100), new Stock(0));
             vendingMachine.addDrinks(Set.of(drink1, drink2));
             Drink drink3 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル2"), new Volume(400), new Price(120), new Stock(5));
-            DataDuplicateException exception = assertThrows(DataDuplicateException.class, () -> vendingMachine.addDrinks(Set.of(drink2)));
+            DataDuplicateException exception = assertThrows(DataDuplicateException.class, () -> vendingMachine.addDrinks(Set.of(drink3)));
             assertEquals("自販機内で飲み物の名前が重複します。", exception.getMessage());
         }
     }
