@@ -34,7 +34,7 @@ public class SlotCapacityTest {
 
         @ParameterizedTest
         @ValueSource(ints = {0, 50, 100})
-        void 値が0以上1000以下のときフィールドが初期化される(Integer value) {
+        void 値が0以上100以下のときフィールドが初期化される(Integer value) {
             SlotCapacity stock = new SlotCapacity(value);
             assertEquals(value, stock.value());
         }
