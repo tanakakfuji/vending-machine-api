@@ -2,13 +2,17 @@ package com.github.tanakakfuji.vending_machine_api.domain.model.drink;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
 @Getter
 @ToString
+@Table
 public class Drink {
+    @Id
     private final Integer id;
     private final Integer vmId;
 
