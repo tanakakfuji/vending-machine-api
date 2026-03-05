@@ -1,15 +1,14 @@
 package com.github.tanakakfuji.vending_machine_api.domain.model.drink;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.relational.core.mapping.Embedded;
 
+import java.util.Objects;
+
 @Getter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
 public class Drink {
-    @EqualsAndHashCode.Include
     private final Integer id;
     private final Integer vmId;
 
@@ -45,5 +44,18 @@ public class Drink {
             throw new IllegalStateException("飲み物の在庫数がありません。");
         }
         stock = new Stock(stock.value() - 1);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Drink drink)) return false;
+        if (id == null || drink.id == null) return false;
+        return Objects.equals(id, drink.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
