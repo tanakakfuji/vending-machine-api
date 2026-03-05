@@ -67,7 +67,7 @@ public class VendingMachine {
             throw new IllegalArgumentException("自販機のスロット数を超えて飲み物を追加できません。");
         }
         if (hasDuplicateName(drinkSet)) {
-            throw new DataDuplicateException("自販機内で飲み物の名前が重複しています。");
+            throw new DataDuplicateException("自販機内で飲み物の名前が重複します。");
         }
         drinks.addAll(drinkSet);
     }
@@ -77,8 +77,9 @@ public class VendingMachine {
     }
 
     private boolean hasDuplicateName(Set<Drink> drinkSet) {
+        Set<String> checkedNames = new HashSet<>();
         Set<String> drinkNames = drinks.stream().map(d -> d.getName().value()).collect(Collectors.toSet());
-        return drinkSet.stream().anyMatch(d -> drinkNames.contains(d.getName().value()));
+        return drinkSet.stream().anyMatch(d -> !checkedNames.add(d.getName().value())) || drinkSet.stream().anyMatch(d -> drinkNames.contains(d.getName().value()));
     }
 
     @Override

@@ -187,13 +187,22 @@ public class VendingMachineTest {
         }
 
         @Test
+        void 自販機に追加する飲み物の名前が重複しているとき例外が発生する() {
+            VendingMachine vendingMachine = VendingMachine.reconstruct(1, new Name("サンプル"), new SlotCapacity(3), Status.OPEN, new HashSet<>());
+            Drink drink1 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル1"), new Volume(500), new Price(100), new Stock(0));
+            Drink drink2 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル1"), new Volume(400), new Price(120), new Stock(5));
+            DataDuplicateException exception = assertThrows(DataDuplicateException.class, () -> vendingMachine.addDrinks(Set.of(drink1, drink2)));
+            assertEquals("自販機内で飲み物の名前が重複します。", exception.getMessage());
+        }
+
+        @Test
         void 自販機に追加する飲み物の名前が既存の飲み物の名前と一致するとき例外が発生する() {
             VendingMachine vendingMachine = VendingMachine.reconstruct(1, new Name("サンプル"), new SlotCapacity(3), Status.OPEN, new HashSet<>());
             Drink drink1 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル1"), new Volume(500), new Price(100), new Stock(0));
             vendingMachine.addDrinks(Set.of(drink1));
             Drink drink2 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル1"), new Volume(400), new Price(120), new Stock(5));
             DataDuplicateException exception = assertThrows(DataDuplicateException.class, () -> vendingMachine.addDrinks(Set.of(drink2)));
-            assertEquals("自販機内で飲み物の名前が重複しています。", exception.getMessage());
+            assertEquals("自販機内で飲み物の名前が重複します。", exception.getMessage());
         }
 
         @Test
@@ -204,7 +213,7 @@ public class VendingMachineTest {
             vendingMachine.addDrinks(Set.of(drink1, drink2));
             Drink drink3 = Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("サンプル2"), new Volume(400), new Price(120), new Stock(5));
             DataDuplicateException exception = assertThrows(DataDuplicateException.class, () -> vendingMachine.addDrinks(Set.of(drink2)));
-            assertEquals("自販機内で飲み物の名前が重複しています。", exception.getMessage());
+            assertEquals("自販機内で飲み物の名前が重複します。", exception.getMessage());
         }
     }
 }
