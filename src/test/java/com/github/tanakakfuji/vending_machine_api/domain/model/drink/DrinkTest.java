@@ -129,7 +129,7 @@ public class DrinkTest {
         }
 
         @Test
-        void 投入金額がpriceと等しいときtrueが返される() {
+        void 投入金額がpriceと等しいとき0が返される() {
             int money = 100;
             Price price = new Price(100);
             Drink drink = Drink.create(1, new Name("サンプル"), new Volume(500), price, new Stock(0));
@@ -139,7 +139,7 @@ public class DrinkTest {
 
         @ParameterizedTest
         @ValueSource(ints = {101, 200})
-        void 投入金額がpriceより大きいときtrueが返される(int money) {
+        void 投入金額がpriceより大きいときお釣りが返される(int money) {
             Price price = new Price(100);
             Drink drink = Drink.create(1, new Name("サンプル"), new Volume(500), price, new Stock(0));
             int actual = drink.calculateChange(money);
