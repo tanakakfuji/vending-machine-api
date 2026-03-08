@@ -31,15 +31,15 @@ public class VendingMachineServiceIntegrationTest {
         void ステータスがOPENの自販機が返される() {
             List<VendingMachine> vendingMachines = vendingMachineService.findOpenVms();
             assertEquals(2, vendingMachines.size());
-            VendingMachine vm1 = vendingMachines.get(0);
+            VendingMachine vm1 = vendingMachines.stream().filter(vm -> vm.getId() == 1).findFirst().get();
             Drink d1 = vm1.getDrinks().stream().filter(d -> d.getId() == 1).findFirst().get();
             Drink d2 = vm1.getDrinks().stream().filter(d -> d.getId() == 2).findFirst().get();
             assertEquals("健康自販機", vm1.getName().value());
             assertEquals("オレンジジュース", d1.getName().value());
             assertEquals("水", d2.getName().value());
-            VendingMachine vm2 = vendingMachines.get(1);
-            Drink d5 = vm2.getDrinks().stream().filter(d -> d.getId() == 5).findFirst().get();
-            Drink d6 = vm2.getDrinks().stream().filter(d -> d.getId() == 6).findFirst().get();
+            VendingMachine vm3 = vendingMachines.stream().filter(vm -> vm.getId() == 3).findFirst().get();
+            Drink d5 = vm3.getDrinks().stream().filter(d -> d.getId() == 5).findFirst().get();
+            Drink d6 = vm3.getDrinks().stream().filter(d -> d.getId() == 6).findFirst().get();
             assertEquals("甘党自販機", vendingMachines.get(1).getName().value());
             assertEquals("三ツ矢サイダー", d5.getName().value());
             assertEquals("コカ・コーラ", d6.getName().value());
