@@ -54,13 +54,13 @@ public class VendingMachineServiceIntegrationTest {
     }
 
     @Nested
-    class purchaseメソッドのテスト {
+    class purchaseDrinkメソッドのテスト {
         @Test
         void 自販機のidがnullのとき例外が発生する() {
             Integer vmId = null;
             Integer drinkId = 1;
             PaymentInput paymentInput = new PaymentInput(500);
-            NullPointerException exception = assertThrows(NullPointerException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("自販機のidが不正な値です。", exception.getMessage());
         }
 
@@ -69,7 +69,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 1;
             Integer drinkId = null;
             PaymentInput paymentInput = new PaymentInput(500);
-            NullPointerException exception = assertThrows(NullPointerException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("飲み物のidが不正な値です。", exception.getMessage());
         }
 
@@ -78,7 +78,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 1;
             Integer drinkId = 1;
             PaymentInput paymentInput = null;
-            NullPointerException exception = assertThrows(NullPointerException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("投入金額が不正な値です。", exception.getMessage());
         }
 
@@ -87,7 +87,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 10;
             Integer drinkId = 1;
             PaymentInput paymentInput = new PaymentInput(500);
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("指定された自販機は存在しません。", exception.getMessage());
         }
 
@@ -96,7 +96,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 2;
             Integer drinkId = 3;
             PaymentInput paymentInput = new PaymentInput(500);
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("指定された自販機は現在公開されていません。", exception.getMessage());
         }
 
@@ -105,7 +105,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 1;
             Integer drinkId = 10;
             PaymentInput paymentInput = new PaymentInput(500);
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("指定された飲み物は存在しません。", exception.getMessage());
         }
 
@@ -114,7 +114,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 1;
             Integer drinkId = 1;
             PaymentInput paymentInput = new PaymentInput(50);
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchase(vmId, drinkId, paymentInput));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput));
             assertEquals("投入金額が不足しています。飲み物の価格は140円です。", exception.getMessage());
         }
 
@@ -123,7 +123,7 @@ public class VendingMachineServiceIntegrationTest {
             Integer vmId = 1;
             Integer drinkId = 1;
             PaymentInput paymentInput = new PaymentInput(500);
-            int diff = vendingMachineService.purchase(vmId, drinkId, paymentInput);
+            int diff = vendingMachineService.purchaseDrink(vmId, drinkId, paymentInput);
             VendingMachine vm = vendingMachineRepository.findById(vmId).get();
             Drink drink = vm.getDrinks().stream().filter(d -> d.getId().equals(drinkId)).findFirst().get();
             assertEquals(360, diff);

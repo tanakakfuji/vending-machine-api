@@ -24,7 +24,7 @@ public class VendingMachineService {
         return vendingMachineRepository.findByStatus(Status.OPEN);
     }
 
-    public int purchase(Integer vmId, Integer drinkId, PaymentInput paymentInput) {
+    public int purchaseDrink(Integer vmId, Integer drinkId, PaymentInput paymentInput) {
         if (vmId == null) throw new NullPointerException("自販機のidが不正な値です。");
         if (drinkId == null) throw new NullPointerException("飲み物のidが不正な値です。");
         if (paymentInput == null) throw new NullPointerException("投入金額が不正な値です。");
