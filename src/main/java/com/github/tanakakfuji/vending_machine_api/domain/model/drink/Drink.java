@@ -50,6 +50,13 @@ public class Drink {
         stock = new Stock(stock.value() - 1);
     }
 
+    public int calculateChange(int money) {
+        if (money < 0 || 100000 < money) throw new IllegalArgumentException("投入金額の値が不正です。");
+        if (price.value() > money)
+            throw new IllegalArgumentException(String.format("投入金額が不足しています。飲み物の価格は%s円です。", price.value()));
+        return money - price.value();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

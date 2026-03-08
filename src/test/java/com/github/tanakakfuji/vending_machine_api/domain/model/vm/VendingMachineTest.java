@@ -56,17 +56,18 @@ public class VendingMachineTest {
     }
 
     @Nested
-    class isClosedメソッドのテスト {
+    class checkOpenedメソッドのテスト {
         @Test
-        void statusがopenのときfalseが返される() {
-            VendingMachine vendingMachine = VendingMachine.create(new Name("サンプル"), new SlotCapacity(10), Status.OPEN);
-            assertFalse(vendingMachine.isClosed());
+        void statusがclosedのとき例外が発生する() {
+            VendingMachine vendingMachine = VendingMachine.create(new Name("サンプル"), new SlotCapacity(10), Status.CLOSED);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, vendingMachine::checkOpened);
+            assertEquals("指定された自販機は現在公開されていません。", exception.getMessage());
         }
 
         @Test
-        void statusがclosedのときtrueが返される() {
-            VendingMachine vendingMachine = VendingMachine.create(new Name("サンプル"), new SlotCapacity(10), Status.CLOSED);
-            assertTrue(vendingMachine.isClosed());
+        void statusがopenのとき例外が発生しない() {
+            VendingMachine vendingMachine = VendingMachine.create(new Name("サンプル"), new SlotCapacity(10), Status.OPEN);
+            assertDoesNotThrow(vendingMachine::checkOpened);
         }
     }
 

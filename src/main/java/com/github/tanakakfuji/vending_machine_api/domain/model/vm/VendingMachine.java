@@ -49,8 +49,8 @@ public class VendingMachine {
         return new VendingMachine(id, name, slotCapacity, status, drinks);
     }
 
-    public boolean isClosed() {
-        return status == Status.CLOSED;
+    public void checkOpened() {
+        if (status == Status.CLOSED) throw new IllegalArgumentException("指定された自販機は現在公開されていません。");
     }
 
     public void addDrinks(Set<Drink> drinkSet) {
