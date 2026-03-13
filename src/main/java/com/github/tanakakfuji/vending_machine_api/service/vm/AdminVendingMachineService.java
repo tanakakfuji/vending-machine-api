@@ -41,6 +41,7 @@ public class AdminVendingMachineService {
     }
 
     public void deleteById(Integer id) {
+        if (id == null) throw new IllegalArgumentException("自販機を指定してください。");
         if (vendingMachineRepository.findById(id).isEmpty())
             throw new IllegalArgumentException("指定された自販機は存在しません。");
         vendingMachineRepository.deleteById(id);

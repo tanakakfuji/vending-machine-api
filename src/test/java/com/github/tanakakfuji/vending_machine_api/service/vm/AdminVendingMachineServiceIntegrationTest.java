@@ -35,7 +35,7 @@ public class AdminVendingMachineServiceIntegrationTest {
     class findAllメソッドのテスト {
         @Test
         void 全ての自販機が取得して返される() {
-            List<VendingMachine> vendingMachines = vendingMachineRepository.findAll();
+            List<VendingMachine> vendingMachines = adminVendingMachineService.findAll();
             VendingMachine vm1 = vendingMachines.stream().filter(vm -> vm.getId() == 1).findFirst().get();
             Drink d1 = vm1.getDrinks().stream().filter(d -> d.getId() == 1).findFirst().get();
             Drink d2 = vm1.getDrinks().stream().filter(d -> d.getId() == 2).findFirst().get();
@@ -141,6 +141,13 @@ public class AdminVendingMachineServiceIntegrationTest {
 
     @Nested
     class deleteByIdメソッドのテスト {
+        @Test
+        void 自販機のidがnullのとき例外が発生する() {
+            Integer id = null;
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> adminVendingMachineService.deleteById(id));
+            assertEquals("自販機を指定してください。", exception.getMessage());
+        }
+
         @Test
         void 自販機のidが存在しないとき例外が発生する() {
             Integer id = 99;
