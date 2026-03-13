@@ -18,36 +18,35 @@ public class VendingMachineDomainServiceIntegrationTest {
     VendingMachineDomainService vendingMachineDomainService;
 
     @Nested
-    class isDuplicateNameメソッドのテスト {
+    class checkDuplicateNameメソッドのテスト {
         @Test
         void nameがnullのとき例外が発生する() {
             Name name = null;
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.isDuplicateName(name));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.checkDuplicateName(name));
             assertEquals("自販機の名前を指定してください。", exception.getMessage());
         }
 
         @Test
-        void nameがvending_machineテーブルに存在するときtrueが返される() {
+        void nameがvending_machineテーブルに存在するとき例外が発生する() {
             Name name = new Name("サンプル1");
-            boolean actual = vendingMachineDomainService.isDuplicateName(name);
-            assertTrue(actual);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.checkDuplicateName(name));
+            assertEquals("入力された名前の自販機が既に存在します。重複しない名前を入力してください。", exception.getMessage());
         }
 
         @Test
-        void nameがvending_machineテーブルに存在しないときfalseが返される() {
+        void nameがvending_machineテーブルに存在しないとき例外が発生しない() {
             Name name = new Name("存在しない名前");
-            boolean actual = vendingMachineDomainService.isDuplicateName(name);
-            assertFalse(actual);
+            assertDoesNotThrow(() -> vendingMachineDomainService.checkDuplicateName(name));
         }
     }
 
     @Nested
-    class isDuplicateNameExcludingIdメソッドのテスト {
+    class checkDuplicateNameExcludingIdメソッドのテスト {
         @Test
         void nameがnullのとき例外が発生する() {
             Name name = null;
             Integer id = 1;
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.isDuplicateNameExcludingId(name, id));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.checkDuplicateNameExcludingId(name, id));
             assertEquals("自販機の名前を指定してください。", exception.getMessage());
         }
 
@@ -55,24 +54,23 @@ public class VendingMachineDomainServiceIntegrationTest {
         void idがnullのとき例外が発生する() {
             Name name = new Name("サンプル1");
             Integer id = null;
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.isDuplicateNameExcludingId(name, id));
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.checkDuplicateNameExcludingId(name, id));
             assertEquals("自販機を指定してください。", exception.getMessage());
         }
 
         @Test
-        void nameがvending_machineテーブルに異なるidで存在するときtrueが返される() {
+        void nameがvending_machineテーブルに異なるidで存在するとき例外が発生する() {
             Name name = new Name("サンプル1");
             Integer id = 2;
-            boolean actual = vendingMachineDomainService.isDuplicateNameExcludingId(name, id);
-            assertTrue(actual);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachineDomainService.checkDuplicateNameExcludingId(name, id));
+            assertEquals("入力された名前の自販機が他に存在します。重複しない名前を入力してください。", exception.getMessage());
         }
 
         @Test
-        void nameがvending_machineテーブルに同じidで存在するときfalseが返される() {
+        void nameがvending_machineテーブルに同じidで存在するとき例外が発生しない() {
             Name name = new Name("サンプル1");
             Integer id = 1;
-            boolean actual = vendingMachineDomainService.isDuplicateNameExcludingId(name, id);
-            assertFalse(actual);
+            assertDoesNotThrow(() -> vendingMachineDomainService.checkDuplicateNameExcludingId(name, id));
         }
     }
 }

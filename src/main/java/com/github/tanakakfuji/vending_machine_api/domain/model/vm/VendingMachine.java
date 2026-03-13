@@ -1,10 +1,10 @@
 package com.github.tanakakfuji.vending_machine_api.domain.model.vm;
 
 import com.github.tanakakfuji.vending_machine_api.domain.model.drink.Drink;
-import com.github.tanakakfuji.vending_machine_api.exception.DataDuplicateException;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
@@ -22,18 +22,15 @@ public class VendingMachine {
     private final Integer id;
 
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-    private final Name name;
+    private Name name;
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-    private final SlotCapacity slotCapacity;
-    private final Status status;
+    private SlotCapacity slotCapacity;
+    private Status status;
     @MappedCollection(idColumn = "VM_ID")
-    private final Set<Drink> drinks;
+    private Set<Drink> drinks;
 
+    @PersistenceCreator
     private VendingMachine(Integer id, Name name, SlotCapacity slotCapacity, Status status, Set<Drink> drinks) {
-        if (name == null) throw new IllegalArgumentException("自販機の名前を指定してください。");
-        if (slotCapacity == null) throw new IllegalArgumentException("自販機のスロット数を指定してください。");
-        if (status == null) throw new IllegalArgumentException("自販機のステータスを指定してください。");
-        if (drinks == null) throw new NullPointerException("drinksにnullを代入できません。");
         this.id = id;
         this.name = name;
         this.slotCapacity = slotCapacity;
@@ -42,15 +39,50 @@ public class VendingMachine {
     }
 
     public static VendingMachine create(Name name, SlotCapacity slotCapacity, Status status) {
-        return new VendingMachine(null, name, slotCapacity, status, new HashSet<>());
+        Integer id = null;
+        Set<Drink> drinks = new HashSet<>();
+        validate(id, name, slotCapacity, status, drinks);
+        return new VendingMachine(id, name, slotCapacity, status, drinks);
     }
 
     public static VendingMachine reconstruct(Integer id, Name name, SlotCapacity slotCapacity, Status status, Set<Drink> drinks) {
+        validate(id, name, slotCapacity, status, drinks);
         return new VendingMachine(id, name, slotCapacity, status, drinks);
+    }
+
+    private static void validate(Integer id, Name name, SlotCapacity slotCapacity, Status status, Set<Drink> drinks) {
+        if (name == null) throw new IllegalArgumentException("自販機の名前を指定してください。");
+        if (slotCapacity == null) throw new IllegalArgumentException("自販機のスロット数を指定してください。");
+        if (slotCapacity.value() < drinks.size())
+            throw new IllegalArgumentException("自販機のスロット数を超えた飲み物の数を登録できません。");
+        if (status == null) throw new IllegalArgumentException("自販機のステータスを指定してください。");
+        if (drinks == null) throw new NullPointerException("drinksにnullを代入できません。");
+        if (drinks.isEmpty()) return;
+        checkValidVmId(id, drinks);
+        checkInputDuplicateName(drinks);
     }
 
     public void checkOpened() {
         if (status == Status.CLOSED) throw new IllegalArgumentException("指定された自販機は現在公開されていません。");
+    }
+
+    private static void checkValidVmId(Integer id, Set<Drink> drinkSet) {
+        if (drinkSet.stream().map(Drink::getVmId).anyMatch(vmId -> !vmId.equals(id)))
+            throw new IllegalArgumentException("対象の自販機が正しく指定されていません。");
+    }
+
+    private static void checkInputDuplicateName(Set<Drink> drinkSet) {
+        Set<String> checkedNames = new HashSet<>();
+        if (drinkSet.stream().anyMatch(d -> !checkedNames.add(d.getName().value())))
+            throw new IllegalArgumentException("入力された飲み物の間で名前が重複しています。重複しない名前を入力してください。");
+    }
+
+    public void update(Name name, SlotCapacity slotCapacity, Status status, Set<Drink> drinks) {
+        validate(id, name, slotCapacity, status, drinks);
+        this.name = name;
+        this.slotCapacity = slotCapacity;
+        this.status = status;
+        this.drinks = drinks;
     }
 
     public void addDrinks(Set<Drink> drinkSet) {
@@ -60,26 +92,19 @@ public class VendingMachine {
         if (id == null) {
             throw new IllegalStateException("自販機を登録した後に飲み物を追加する必要があります。");
         }
-        if (!isValidVmId(drinkSet)) {
-            throw new IllegalArgumentException("対象の自販機が正しく指定されていません。");
-        }
         if (drinks.size() + drinkSet.size() > slotCapacity.value()) {
             throw new IllegalArgumentException("自販機のスロット数を超えて飲み物を追加できません。");
         }
-        if (hasDuplicateName(drinkSet)) {
-            throw new DataDuplicateException("自販機内で飲み物の名前が重複します。");
-        }
+        checkValidVmId(id, drinkSet);
+        checkAdditionalDuplicateName(drinkSet);
         drinks.addAll(drinkSet);
     }
 
-    private boolean isValidVmId(Set<Drink> drinkSet) {
-        return drinkSet.stream().map(Drink::getVmId).allMatch(id::equals);
-    }
-
-    private boolean hasDuplicateName(Set<Drink> drinkSet) {
-        Set<String> checkedNames = new HashSet<>();
-        Set<String> drinkNames = drinks.stream().map(d -> d.getName().value()).collect(Collectors.toSet());
-        return drinkSet.stream().anyMatch(d -> !checkedNames.add(d.getName().value())) || drinkSet.stream().anyMatch(d -> drinkNames.contains(d.getName().value()));
+    private void checkAdditionalDuplicateName(Set<Drink> drinkSet) {
+        checkInputDuplicateName(drinkSet);
+        Set<String> existingNames = drinks.stream().map(d -> d.getName().value()).collect(Collectors.toSet());
+        if (drinkSet.stream().anyMatch(d -> existingNames.contains(d.getName().value())))
+            throw new IllegalArgumentException("入力された飲み物の名前が既に存在します。重複しない名前を入力してください。");
     }
 
     @Override

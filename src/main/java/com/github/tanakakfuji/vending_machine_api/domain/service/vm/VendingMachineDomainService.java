@@ -12,14 +12,16 @@ public class VendingMachineDomainService {
         this.vendingMachineRepository = vendingMachineRepository;
     }
 
-    public boolean isDuplicateName(Name name) {
+    public void checkDuplicateName(Name name) {
         if (name == null) throw new IllegalArgumentException("自販機の名前を指定してください。");
-        return vendingMachineRepository.existsByName(name);
+        if (vendingMachineRepository.existsByName(name))
+            throw new IllegalArgumentException("入力された名前の自販機が既に存在します。重複しない名前を入力してください。");
     }
 
-    public boolean isDuplicateNameExcludingId(Name name, Integer id) {
+    public void checkDuplicateNameExcludingId(Name name, Integer id) {
         if (name == null) throw new IllegalArgumentException("自販機の名前を指定してください。");
         if (id == null) throw new IllegalArgumentException("自販機を指定してください。");
-        return vendingMachineRepository.existsByNameAndIdNot(name, id);
+        if (vendingMachineRepository.existsByNameAndIdNot(name, id))
+            throw new IllegalArgumentException("入力された名前の自販機が他に存在します。重複しない名前を入力してください。");
     }
 }
