@@ -53,6 +53,8 @@ public class VendingMachine {
     private static void validate(Integer id, Name name, SlotCapacity slotCapacity, Status status, Set<Drink> drinks) {
         if (name == null) throw new IllegalArgumentException("自販機の名前を指定してください。");
         if (slotCapacity == null) throw new IllegalArgumentException("自販機のスロット数を指定してください。");
+        if (slotCapacity.value() < drinks.size())
+            throw new IllegalArgumentException("自販機のスロット数を超えた飲み物の数を登録できません。");
         if (status == null) throw new IllegalArgumentException("自販機のステータスを指定してください。");
         if (drinks == null) throw new NullPointerException("drinksにnullを代入できません。");
         if (drinks.isEmpty()) return;

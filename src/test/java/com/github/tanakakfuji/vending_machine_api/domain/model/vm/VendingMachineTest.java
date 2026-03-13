@@ -52,6 +52,17 @@ public class VendingMachineTest {
             assertEquals(slotCapacity, vendingMachine.getSlotCapacity());
             assertEquals(status, vendingMachine.getStatus());
         }
+
+        @Test
+        void slotCapacityが0でもフィールドが初期化される() {
+            Name name = new Name("サンプル");
+            SlotCapacity slotCapacity = new SlotCapacity(0);
+            Status status = Status.OPEN;
+            VendingMachine vendingMachine = VendingMachine.create(name, slotCapacity, status);
+            assertEquals(name, vendingMachine.getName());
+            assertEquals(slotCapacity, vendingMachine.getSlotCapacity());
+            assertEquals(status, vendingMachine.getStatus());
+        }
     }
 
     @Nested
@@ -70,6 +81,49 @@ public class VendingMachineTest {
             SlotCapacity slotCapacity = null;
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachine.update(new Name("更新後の名前"), slotCapacity, Status.CLOSED, new HashSet<>()));
             assertEquals("自販機のスロット数を指定してください。", exception.getMessage());
+        }
+
+        @Test
+        void slotCapacityを超える飲み物の数のとき例外が発生する() {
+            Set<Drink> drinks = new HashSet<>();
+            drinks.add(Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("飲み物サンプル1"), new Volume(500), new Price(100), new Stock(5)));
+            drinks.add(Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("飲み物サンプル2"), new Volume(500), new Price(100), new Stock(5)));
+            VendingMachine vendingMachine = VendingMachine.reconstruct(1, new Name("サンプル"), new SlotCapacity(10), Status.OPEN, drinks);
+            SlotCapacity slotCapacity = new SlotCapacity(1);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vendingMachine.update(new Name("更新後の名前"), slotCapacity, Status.CLOSED, drinks));
+            assertEquals("自販機のスロット数を超えた飲み物の数を登録できません。", exception.getMessage());
+        }
+
+        @Test
+        void slotCapacityと同じ飲み物の数のときフィールドが更新される() {
+            Set<Drink> drinks = new HashSet<>();
+            drinks.add(Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("飲み物サンプル1"), new Volume(500), new Price(100), new Stock(5)));
+            drinks.add(Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("飲み物サンプル2"), new Volume(500), new Price(100), new Stock(5)));
+            VendingMachine vendingMachine = VendingMachine.reconstruct(1, new Name("サンプル"), new SlotCapacity(10), Status.OPEN, drinks);
+            Name name = new Name("更新後の名前");
+            SlotCapacity slotCapacity = new SlotCapacity(2);
+            Status status = Status.CLOSED;
+            vendingMachine.update(name, slotCapacity, status, drinks);
+            assertEquals(name, vendingMachine.getName());
+            assertEquals(slotCapacity, vendingMachine.getSlotCapacity());
+            assertEquals(status, vendingMachine.getStatus());
+            assertEquals(drinks, vendingMachine.getDrinks());
+        }
+
+        @Test
+        void slotCapacityより少ない飲み物の数のときフィールドが更新される() {
+            Set<Drink> drinks = new HashSet<>();
+            drinks.add(Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("飲み物サンプル1"), new Volume(500), new Price(100), new Stock(5)));
+            drinks.add(Drink.create(1, new com.github.tanakakfuji.vending_machine_api.domain.model.drink.Name("飲み物サンプル2"), new Volume(500), new Price(100), new Stock(5)));
+            VendingMachine vendingMachine = VendingMachine.reconstruct(1, new Name("サンプル"), new SlotCapacity(10), Status.OPEN, drinks);
+            Name name = new Name("更新後の名前");
+            SlotCapacity slotCapacity = new SlotCapacity(3);
+            Status status = Status.CLOSED;
+            vendingMachine.update(name, slotCapacity, status, drinks);
+            assertEquals(name, vendingMachine.getName());
+            assertEquals(slotCapacity, vendingMachine.getSlotCapacity());
+            assertEquals(status, vendingMachine.getStatus());
+            assertEquals(drinks, vendingMachine.getDrinks());
         }
 
         @Test
