@@ -1,7 +1,6 @@
 package com.github.tanakakfuji.vending_machine_api.domain.model.vm;
 
 import com.github.tanakakfuji.vending_machine_api.domain.model.drink.Drink;
-import com.github.tanakakfuji.vending_machine_api.exception.DataDuplicateException;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
@@ -72,14 +71,11 @@ public class VendingMachine {
         drinks.addAll(drinkSet);
     }
 
-    private boolean isValidVmId(Set<Drink> drinkSet) {
-        return drinkSet.stream().map(Drink::getVmId).allMatch(id::equals);
-    }
-
-    private boolean hasDuplicateName(Set<Drink> drinkSet) {
-        Set<String> checkedNames = new HashSet<>();
-        Set<String> drinkNames = drinks.stream().map(d -> d.getName().value()).collect(Collectors.toSet());
-        return drinkSet.stream().anyMatch(d -> !checkedNames.add(d.getName().value())) || drinkSet.stream().anyMatch(d -> drinkNames.contains(d.getName().value()));
+    private void checkAdditionalDuplicateName(Set<Drink> drinkSet) {
+        checkInputDuplicateName(drinkSet);
+        Set<String> existingNames = drinks.stream().map(d -> d.getName().value()).collect(Collectors.toSet());
+        if (drinkSet.stream().anyMatch(d -> existingNames.contains(d.getName().value())))
+            throw new IllegalArgumentException("入力された飲み物の名前が既に存在します。重複しない名前を入力してください。");
     }
 
     @Override
