@@ -61,6 +61,13 @@ public class AdminVendingMachineServiceIntegrationTest {
     @Sql("AdminVendingMachineServiceIntegrationTestOnlyVm.sql")
     class createメソッドのテスト {
         @Test
+        void 登録自販機がnullのとき例外が発生する() {
+            VendingMachineInput vmInput = null;
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> adminVendingMachineService.create(vmInput));
+            assertEquals("登録自販機が不正な値です。", exception.getMessage());
+        }
+
+        @Test
         void 自販機の名前が重複するとき例外が発生する() {
             String name = "目覚まし自販機";
             VendingMachineInput vmInput = new VendingMachineInput(name, 5, Status.OPEN);
@@ -91,8 +98,16 @@ public class AdminVendingMachineServiceIntegrationTest {
         void 自販機のidがnullのとき例外が発生する() {
             Integer id = null;
             VendingMachineInput vmInput = new VendingMachineInput("サンプル", 5, Status.OPEN);
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> adminVendingMachineService.update(id, vmInput));
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> adminVendingMachineService.update(id, vmInput));
             assertEquals("自販機を指定してください。", exception.getMessage());
+        }
+
+        @Test
+        void 登録自販機が不正な値のとき例外が発生する() {
+            Integer id = 1;
+            VendingMachineInput vmInput = null;
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> adminVendingMachineService.update(id, vmInput));
+            assertEquals("登録自販機が不正な値です。", exception.getMessage());
         }
 
         @Test
@@ -144,7 +159,7 @@ public class AdminVendingMachineServiceIntegrationTest {
         @Test
         void 自販機のidがnullのとき例外が発生する() {
             Integer id = null;
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> adminVendingMachineService.deleteById(id));
+            NullPointerException exception = assertThrows(NullPointerException.class, () -> adminVendingMachineService.deleteById(id));
             assertEquals("自販機を指定してください。", exception.getMessage());
         }
 
