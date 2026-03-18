@@ -3,6 +3,7 @@ package com.github.tanakakfuji.vending_machine_api.domain.model.drink;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -17,20 +18,16 @@ public class Drink {
     private final Integer vmId;
 
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-    private final Name name;
+    private Name name;
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-    private final Volume volume;
+    private Volume volume;
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-    private final Price price;
+    private Price price;
     @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
     private Stock stock;
 
+    @PersistenceCreator
     private Drink(Integer id, Integer vmId, Name name, Volume volume, Price price, Stock stock) {
-        if (vmId == null) throw new IllegalArgumentException("自販機を指定してください。");
-        if (name == null) throw new IllegalArgumentException("飲み物の名前を指定してください。");
-        if (volume == null) throw new IllegalArgumentException("飲み物の内容量を指定してください。");
-        if (price == null) throw new IllegalArgumentException("飲み物の価格を指定してください。");
-        if (stock == null) throw new IllegalArgumentException("飲み物の在庫数を指定してください。");
         this.id = id;
         this.vmId = vmId;
         this.name = name;
@@ -40,7 +37,16 @@ public class Drink {
     }
 
     public static Drink create(Integer vmId, Name name, Volume volume, Price price, Stock stock) {
+        validate(vmId, name, volume, price, stock);
         return new Drink(null, vmId, name, volume, price, stock);
+    }
+
+    private static void validate(Integer vmId, Name name, Volume volume, Price price, Stock stock) {
+        if (vmId == null) throw new IllegalArgumentException("自販機を指定してください。");
+        if (name == null) throw new IllegalArgumentException("飲み物の名前を指定してください。");
+        if (volume == null) throw new IllegalArgumentException("飲み物の内容量を指定してください。");
+        if (price == null) throw new IllegalArgumentException("飲み物の価格を指定してください。");
+        if (stock == null) throw new IllegalArgumentException("飲み物の在庫数を指定してください。");
     }
 
     public void decrementStock() {
@@ -55,6 +61,14 @@ public class Drink {
         if (price.value() > money)
             throw new IllegalArgumentException(String.format("投入金額が不足しています。飲み物の価格は%s円です。", price.value()));
         return money - price.value();
+    }
+
+    public void update(Name name, Volume volume, Price price, Stock stock) {
+        validate(vmId, name, volume, price, stock);
+        this.name = name;
+        this.volume = volume;
+        this.price = price;
+        this.stock = stock;
     }
 
     @Override
