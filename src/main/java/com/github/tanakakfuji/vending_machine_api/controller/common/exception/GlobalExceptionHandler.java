@@ -1,4 +1,4 @@
-package com.github.tanakakfuji.vending_machine_api.controller.common.excepction;
+package com.github.tanakakfuji.vending_machine_api.controller.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
