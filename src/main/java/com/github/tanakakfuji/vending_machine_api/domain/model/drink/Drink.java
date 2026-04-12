@@ -41,6 +41,11 @@ public class Drink {
         return new Drink(null, vmId, name, volume, price, stock);
     }
 
+    public static Drink reconstruct(Integer id, Integer vmId, Name name, Volume volume, Price price, Stock stock) {
+        validate(vmId, name, volume, price, stock);
+        return new Drink(id, vmId, name, volume, price, stock);
+    }
+
     private static void validate(Integer vmId, Name name, Volume volume, Price price, Stock stock) {
         if (vmId == null) throw new IllegalArgumentException("自販機を指定してください。");
         if (name == null) throw new IllegalArgumentException("飲み物の名前を指定してください。");
