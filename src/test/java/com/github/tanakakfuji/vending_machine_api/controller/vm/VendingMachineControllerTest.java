@@ -128,7 +128,7 @@ public class VendingMachineControllerTest {
                                     .content(requestBody)
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", is(100)));
+                    .andExpect(jsonPath("$.change", is(100)));
         }
     }
 }
