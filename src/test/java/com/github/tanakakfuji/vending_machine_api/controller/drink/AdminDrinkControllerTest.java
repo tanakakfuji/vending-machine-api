@@ -9,11 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @WebMvcTest(AdminDrinkController.class)
 public class AdminDrinkControllerTest {
@@ -35,7 +36,8 @@ public class AdminDrinkControllerTest {
             mockMvc.perform(post("/api/admin/vending-machines/{vmId}/drinks", 1)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("Invalid request content.")));
         }
 
         @Test
@@ -55,7 +57,8 @@ public class AdminDrinkControllerTest {
             mockMvc.perform(post("/api/admin/vending-machines/{vmId}/drinks", 1)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("Invalid request content.")));
         }
 
         @Test
@@ -77,7 +80,8 @@ public class AdminDrinkControllerTest {
             mockMvc.perform(post("/api/admin/vending-machines/{vmId}/drinks", 99)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message", is("指定された自販機は存在しません")));
         }
 
         @Test
@@ -117,7 +121,8 @@ public class AdminDrinkControllerTest {
             mockMvc.perform(put("/api/admin/vending-machines/{vmId}/drinks/{drinkId}", 1, 1)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("Invalid request content.")));
         }
 
         @Test
@@ -135,7 +140,8 @@ public class AdminDrinkControllerTest {
             mockMvc.perform(put("/api/admin/vending-machines/{vmId}/drinks/{drinkId}", 1, 99)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message", is("指定された飲み物は存在しません")));
         }
 
         @Test
@@ -163,7 +169,8 @@ public class AdminDrinkControllerTest {
             doThrow(new IllegalArgumentException("指定された飲み物は存在しません"))
                     .when(adminDrinkService).deleteById(anyInt(), anyInt());
             mockMvc.perform(delete("/api/admin/vending-machines/{vmId}/drinks/{drinkId}", 1, 99))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message", is("指定された飲み物は存在しません")));
         }
 
         @Test
