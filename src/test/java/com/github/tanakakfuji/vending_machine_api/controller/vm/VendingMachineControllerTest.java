@@ -103,7 +103,7 @@ public class VendingMachineControllerTest {
                         "money": 200
                     }
                     """;
-            doThrow(new IllegalArgumentException("指定された飲み物が存在しません"))
+            doThrow(new IllegalArgumentException("指定された飲み物は存在しません。"))
                     .when(vendingMachineService).purchaseDrink(anyInt(), anyInt(), any());
             mockMvc.perform(
                             post("/api/vending-machines/1/purchase/99")
@@ -111,7 +111,7 @@ public class VendingMachineControllerTest {
                                     .content(requestBody)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message", is("指定された飲み物が存在しません")));
+                    .andExpect(jsonPath("$.message", is("指定された飲み物は存在しません。")));
         }
 
         @Test
