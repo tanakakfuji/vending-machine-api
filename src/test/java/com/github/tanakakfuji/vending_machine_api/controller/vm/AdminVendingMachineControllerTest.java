@@ -95,7 +95,8 @@ public class AdminVendingMachineControllerTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(requestBody)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("Invalid request content.")));
         }
 
         @Test
@@ -114,7 +115,8 @@ public class AdminVendingMachineControllerTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(requestBody)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message", is("入力された名前の自販機が既に存在します。重複しない名前を入力してください。")));
         }
 
         @Test
@@ -154,7 +156,8 @@ public class AdminVendingMachineControllerTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(requestBody)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("Invalid request content.")));
         }
 
         @Test
@@ -173,7 +176,8 @@ public class AdminVendingMachineControllerTest {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(requestBody)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message", is("入力された名前の自販機が他に存在します。重複しない名前を入力してください。")));
         }
 
         @Test
@@ -206,7 +210,8 @@ public class AdminVendingMachineControllerTest {
             mockMvc.perform(
                             delete("/api/admin/vending-machines/{id}", 99)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message", is("指定された自販機が存在しません。")));
         }
 
         @Test
